@@ -8,17 +8,37 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Share+Tech+Mono&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Canvas for subtle animations (dust/embers) -->
+  <!-- Canvas for subtle animations (dust/embers/waves) -->
   <canvas id="bg-canvas"></canvas>
+
+  <header class="top-nav">
+    <div class="logo"><i class="ph ph-waves"></i> RecomMusic</div>
+    
+    <div class="nav-center">
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="focus" title="집중 모드"><i class="ph ph-target"></i> Focus</button>
+        <button class="mode-btn" data-mode="gaming" title="게이밍 모드"><i class="ph ph-game-controller"></i> Gaming</button>
+        <button class="mode-btn" data-mode="mix" title="믹스 모드"><i class="ph ph-coffee"></i> Mix</button>
+      </div>
+      
+      
+    </div>
+
+    <div class="nav-right" style="display: flex; gap: 1rem; align-items: center;">
+      <button id="btn-toggle-mixer" class="mode-btn" title="사운드 믹서"><i class="ph ph-sliders"></i> Mixer</button>
+    </div>
+
+
+  </header>
 
   <div id="player-container" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
     <div id="player"></div>
   </div>
 
-  <main class="app-container">
+  <main class="app-container glass-panel" id="main-ui">
     <div class="player-wrapper">
       
       <!-- Left: Player Controls & Info -->
@@ -51,14 +71,14 @@
         <div class="controls">
           <button id="btn-repeat" class="btn" title="Repeat Mode"><i class="ph ph-repeat" id="repeat-icon"></i></button>
           
-          <button id="btn-prev" class="btn" title="Previous Track"><i class="ph ph-skip-back-fill"></i></button>
+          <button id="btn-prev" class="btn" title="Previous Track"><i class="ph-fill ph-skip-back"></i></button>
           <button id="btn-rewind" class="btn" title="Rewind 10s"><i class="ph ph-rewind"></i></button>
           
-          <button id="btn-play" class="btn btn-main" title="Play/Pause"><i class="ph ph-play-fill" id="play-icon"></i></button>
-          <button id="btn-stop" class="btn" title="Stop"><i class="ph ph-square-fill"></i></button>
+          <button id="btn-play" class="btn btn-main" title="Play/Pause"><i class="ph-fill ph-play" id="play-icon"></i></button>
+          <button id="btn-stop" class="btn" title="Stop"><i class="ph-fill ph-square"></i></button>
           
           <button id="btn-forward" class="btn" title="Forward 10s"><i class="ph ph-fast-forward"></i></button>
-          <button id="btn-next" class="btn" title="Next Track"><i class="ph ph-skip-forward-fill"></i></button>
+          <button id="btn-next" class="btn" title="Next Track"><i class="ph-fill ph-skip-forward"></i></button>
           
           <button id="btn-speed" class="btn text-btn" title="Playback Speed">1.0x</button>
 
@@ -89,11 +109,58 @@
       </section>
       
     </div>
+
+    <div class="dashboard-wrapper">
+      <div class="dashboard-controls">
+        <button id="btn-lock-screen" class="nav-icon-btn" title="화면 잠금"><i class="ph ph-lock"></i> 잠금</button>
+        <button id="btn-timer-toggle" class="nav-icon-btn" title="타이머 재생/일시정지"><i class="ph ph-play"></i> 시작/멈춤</button>
+        <button id="btn-timer-reset" class="nav-icon-btn" title="타이머 초기화"><i class="ph ph-arrow-counter-clockwise"></i> 초기화</button>
+      </div>
+      <div id="maple-xp-container" class="maple-xp-container">
+        <div class="xp-info">
+          <span id="xp-text-display">LV.1 (0.00%) / 00:00</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div id="xp-bar-fill" class="xp-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
   </main>
+
+  <!-- Focus Mode Overlay -->
+  <div id="focus-overlay" class="focus-overlay" style="display: none;">
+    <div class="focus-glass-panel">
+      <div class="focus-greeting">
+        <i class="ph-fill ph-plant"></i>
+        <span>Stay Focused</span>
+      </div>
+      <div id="overlay-timer" class="focus-timer-soft">Lv.1 (00:00)</div>
+      
+      <div id="focus-orb-btn" class="focus-orb-container paused" title="모닥불을 탭하여 일상으로 돌아가기">
+        <div class="campfire-wrapper">
+          <div class="fire">
+            <div class="flame flame-main"></div>
+            <div class="flame flame-left"></div>
+            <div class="flame flame-right"></div>
+            <div class="spark spark1"></div>
+            <div class="spark spark2"></div>
+            <div class="spark spark3"></div>
+          </div>
+          <div class="logs">
+            <div class="log log-left"></div>
+            <div class="log log-right"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="focus-hint">모닥불을 탭하여 일상으로 돌아가기</div>
+    </div>
+  </div>
 
   <!-- Search Modal -->
   <div id="search-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
+    <div class="modal-content glass-panel">
       <div class="modal-header">
         <h3>추천 곡 리스트</h3>
         <button id="btn-close-modal" class="btn-close"><i class="ph ph-x"></i></button>
@@ -107,7 +174,32 @@
     </div>
   </div>
 
-  <script src="https://www.youtube.com/iframe_api"></script>
+  <!-- Sound Mixer Hotbar -->
+  <div id="mixer-hotbar" class="mixer-hotbar glass-panel">
+    <div class="mixer-item">
+      <button id="btn-ambient-rain" class="mixer-icon-btn"><i class="ph ph-cloud-rain"></i></button>
+      <input type="range" id="ambient-volume-rain" min="0" max="100" value="50" class="mixer-slider">
+    </div>
+    <div class="mixer-item">
+      <button id="btn-ambient-fire" class="mixer-icon-btn"><i class="ph ph-fire"></i></button>
+      <input type="range" id="ambient-volume-fire" min="0" max="100" value="50" class="mixer-slider">
+    </div>
+    <div class="mixer-item">
+      <button id="btn-ambient-wind" class="mixer-icon-btn"><i class="ph ph-wind"></i></button>
+      <input type="range" id="ambient-volume-wind" min="0" max="100" value="50" class="mixer-slider">
+    </div>
+  </div>
+
+  <!-- Ambient Audio Sources -->
+  <audio id="audio-rain" loop src="https://actions.google.com/sounds/v1/weather/rain_on_roof.ogg"></audio>
+  <audio id="audio-fire" loop src="https://actions.google.com/sounds/v1/foley/fire_burning.ogg"></audio>
+  <audio id="audio-wind" loop src="https://actions.google.com/sounds/v1/weather/strong_wind.ogg"></audio>
+
+  
+  </div>
+  
+  <div id="level-up-toast" class="level-up-toast">LEVEL UP!</div>
+
   <script type="module" src="./main.js"></script>
 </body>
 </html>
