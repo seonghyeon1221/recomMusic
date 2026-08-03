@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minimal OST Player</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Canvas for subtle animations (dust/embers) -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div id="player-container" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;">
+    <div id="player"></div>
+  </div>
+
+  <main class="app-container">
+    <div class="player-wrapper">
+      
+      <!-- Left: Player Controls & Info -->
+      <section class="player-info">
+        <div class="visualizer-container">
+          <!-- Removed equalizer to eliminate karaoke vibe -->
+        </div>
+        
+        <div class="song-details">
+          <h1 id="song-title">Awaiting Track</h1>
+          <p id="song-artist">Add a URL to start</p>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="btn-recommend" class="recommend-btn" title="비슷한 장르 추천받기 (유튜브 검색)">
+              <i class="ph ph-sparkle"></i> 비슷한 곡 찾기
+            </button>
+            <button id="btn-original" class="recommend-btn" title="유튜브 원본 영상 열기">
+              <i class="ph ph-youtube-logo"></i> 원본 보기
+            </button>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <span id="time-current" class="time">-:--</span>
+          <div class="progress-bar" id="progress-wrapper">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <span id="time-total" class="time">-:--</span>
+        </div>
+
+        <div class="controls">
+          <button id="btn-repeat" class="btn" title="Repeat Mode"><i class="ph ph-repeat" id="repeat-icon"></i></button>
+          
+          <button id="btn-prev" class="btn" title="Previous Track"><i class="ph ph-skip-back-fill"></i></button>
+          <button id="btn-rewind" class="btn" title="Rewind 10s"><i class="ph ph-rewind"></i></button>
+          
+          <button id="btn-play" class="btn btn-main" title="Play/Pause"><i class="ph ph-play-fill" id="play-icon"></i></button>
+          <button id="btn-stop" class="btn" title="Stop"><i class="ph ph-square-fill"></i></button>
+          
+          <button id="btn-forward" class="btn" title="Forward 10s"><i class="ph ph-fast-forward"></i></button>
+          <button id="btn-next" class="btn" title="Next Track"><i class="ph ph-skip-forward-fill"></i></button>
+          
+          <button id="btn-speed" class="btn text-btn" title="Playback Speed">1.0x</button>
+
+          <div class="volume-wrapper">
+            <i class="ph ph-speaker-high" id="volume-icon"></i>
+            <input type="range" id="volume-slider" min="0" max="100" value="50">
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Playlist -->
+      <section class="playlist-section">
+        <div class="playlist-header">
+          <div class="playlist-title-row">
+            <h2>Playlist</h2>
+            <button id="btn-clear-all" class="clear-all-btn" title="전체 삭제"><i class="ph ph-trash"></i> Clear</button>
+          </div>
+          <div class="add-track">
+            <i class="ph ph-link"></i>
+            <input type="text" id="yt-link-input" placeholder="YouTube Link or ID..." autocomplete="off">
+            <button id="btn-add"><i class="ph ph-plus"></i></button>
+          </div>
+        </div>
+        
+        <ul class="playlist-list" id="playlist">
+          <!-- Items injected via JS -->
+        </ul>
+      </section>
+      
+    </div>
+  </main>
+
+  <!-- Search Modal -->
+  <div id="search-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>추천 곡 리스트</h3>
+        <button id="btn-close-modal" class="btn-close"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="search-loading" class="search-loading">
+        <i class="ph ph-spinner-gap ph-spin"></i> 비슷한 곡을 찾고 있어요...
+      </div>
+      <ul id="search-results" class="search-results-list" style="display: none;">
+        <!-- Injected via JS -->
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
